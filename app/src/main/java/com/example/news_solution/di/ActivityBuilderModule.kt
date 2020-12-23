@@ -13,8 +13,10 @@ import dagger.android.ContributesAndroidInjector
 public abstract class ActivityBuilderModule {
 
     @ContributesAndroidInjector
+    @ActivityScope
     public abstract fun contributeMainActivity() : MainActivity
 
     @Binds
+    @ActivityScope
     abstract  fun providesStorage(storage : RemoteRepositoryImpl) : RemoteRepository
 }

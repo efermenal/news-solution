@@ -13,6 +13,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 object AppModule {
 
     @Provides
+    @AppScope
     fun provideRetrofit() : Retrofit{
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
