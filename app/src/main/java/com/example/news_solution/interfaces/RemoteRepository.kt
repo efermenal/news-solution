@@ -1,5 +1,5 @@
 package com.example.news_solution.interfaces
-import com.example.news_solution.Resource
+import com.example.news_solution.utils.Resource
 import com.example.news_solution.models.NewsResponse
 
 interface RemoteRepository {

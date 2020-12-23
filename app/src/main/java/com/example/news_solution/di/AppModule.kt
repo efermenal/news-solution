@@ -1,7 +1,7 @@
 package com.example.news_solution.di
 
 import com.example.news_solution.BuildConfig
-import com.example.news_solution.Constants.BASE_URL
+import com.example.news_solution.utils.Constants.BASE_URL
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient

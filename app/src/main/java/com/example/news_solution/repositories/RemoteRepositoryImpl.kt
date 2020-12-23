@@ -1,6 +1,6 @@
 package com.example.news_solution.repositories
 
-import com.example.news_solution.Resource
+import com.example.news_solution.utils.Resource
 import com.example.news_solution.api.api
 import com.example.news_solution.interfaces.RemoteRepository
 import com.example.news_solution.models.NewsResponse
@@ -22,7 +22,7 @@ constructor(private  val retrofit: Retrofit) : RemoteRepository {
         TODO("pending")
     }
 
-    private fun handleBreakingNews(response : Response<NewsResponse>) : Resource<NewsResponse>{
+    private fun handleBreakingNews(response : Response<NewsResponse>) : Resource<NewsResponse> {
         if (response.isSuccessful){
             response.body()?.let { resultResponse ->
                 return Resource.Success(resultResponse)
