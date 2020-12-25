@@ -1,14 +1,14 @@
 package com.example.news_solution.adapters
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.news_solution.databinding.FragmentHomeBinding
+import com.bumptech.glide.Glide
 import com.example.news_solution.databinding.ItemArticleBinding
 import com.example.news_solution.models.Article
+
 
 class ArticlesAdapter: RecyclerView.Adapter<ArticlesAdapter.ArticleViewHolder>() {
 
@@ -37,16 +37,21 @@ class ArticlesAdapter: RecyclerView.Adapter<ArticlesAdapter.ArticleViewHolder>()
     }
 
     override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
+
        with(holder){
+
            with(differ.currentList[position]){
                 binding.tvDescription.text = description
                 binding.tvPublishedAt.text = publishedAt
                 binding.tvSource.text = source.name
                 binding.tvTitle.text = title
 
+               Glide.with(holder.itemView).load(urlToImage).into(binding.ivArticleImage)
+
                holder.itemView.setOnClickListener{
                    onItemClickListener?.let { it(this) }
                }
+
            }
        }
 
