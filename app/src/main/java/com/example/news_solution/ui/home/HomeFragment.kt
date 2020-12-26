@@ -6,9 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.news_solution.MainActivity
+import com.example.news_solution.NewsViewModel
+import com.example.news_solution.R
 import com.example.news_solution.adapters.ArticlesAdapter
 import com.example.news_solution.databinding.FragmentHomeBinding
+import com.example.news_solution.models.Article
+import com.example.news_solution.models.Source
 import com.example.news_solution.utils.Resource
 import dagger.android.support.DaggerFragment
 import timber.log.Timber
@@ -20,16 +26,12 @@ class HomeFragment : DaggerFragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    private lateinit var viewModel: HomeViewModel
+    private lateinit var viewModel: NewsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        //homeFragment =  viewModel(viewModelFactory) TODO: search for Fernando Cejas explanation
-       viewModel = ViewModelProvider(this, viewModelFactory).get(HomeViewModel::class.java)
+        Timber.d("THIS IS A FRAGMENT")
+        viewModel = (activity as MainActivity).viewModel
         Timber.d("VARIABLE VALUE %s", viewModel)
     }
 
@@ -43,6 +45,17 @@ class HomeFragment : DaggerFragment() {
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
         settingObservers()
+        val article = Article(id = 1,
+            author = "Endherson",
+            title = "NO TITLE",
+            content = "NOTHING",
+            description = "NO ONE",
+            publishedAt = "NEVAH",
+            url = "WWW.SITE.COM",
+            urlToImage = "WWW.SITE.COM/IMAGE.JPG",
+            source = Source("","")
+        )
+        viewModel.saveArticle(article)
     }
 
     override fun onDestroyView() {
@@ -55,6 +68,17 @@ class HomeFragment : DaggerFragment() {
         binding.rvBreakingNews.apply {
             adapter = articlesAdapter
             layoutManager = LinearLayoutManager(activity)
+        }
+
+        articlesAdapter.setOnItemClickListener {
+            val bundle = Bundle().apply {
+                putSerializable("article", it)
+            }
+
+            findNavController().navigate(
+                R.id.action_navigation_home_to_articleFragment,
+                bundle
+            )
         }
     }
 

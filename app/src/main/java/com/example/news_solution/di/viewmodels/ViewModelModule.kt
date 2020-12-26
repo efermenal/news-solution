@@ -2,7 +2,7 @@ package com.example.news_solution.di.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.news_solution.ui.home.HomeViewModel
+import com.example.news_solution.NewsViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -16,8 +16,8 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(HomeViewModel::class)
-    abstract fun bindsHomeViewModel(homeViewModel: HomeViewModel): ViewModel
+    @ViewModelKey(NewsViewModel::class)
+    abstract fun bindsHomeViewModel(homeViewModel: NewsViewModel): ViewModel
 
 
 }
