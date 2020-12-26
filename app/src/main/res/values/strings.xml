@@ -8,4 +8,7 @@
     <string name="published_at">PUBLISHED AT</string>
     <string name="source">SOURCE</string>
     <string name="todo">TODO</string>
+    <string name="title_breaking">Breaking</string>
+    <string name="title_saved">Saved</string>
+    <string name="title_search">Search</string>
 </resources>

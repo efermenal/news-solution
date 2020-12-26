@@ -15,6 +15,7 @@ import com.example.news_solution.adapters.ArticlesAdapter
 import com.example.news_solution.databinding.FragmentHomeBinding
 import com.example.news_solution.models.Article
 import com.example.news_solution.models.Source
+import com.example.news_solution.utils.Constants.BUNDLE_ARTICLE
 import com.example.news_solution.utils.Resource
 import dagger.android.support.DaggerFragment
 import timber.log.Timber
@@ -30,9 +31,7 @@ class HomeFragment : DaggerFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Timber.d("THIS IS A FRAGMENT")
         viewModel = (activity as MainActivity).viewModel
-        Timber.d("VARIABLE VALUE %s", viewModel)
     }
 
 
@@ -45,17 +44,6 @@ class HomeFragment : DaggerFragment() {
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
         settingObservers()
-        val article = Article(id = 1,
-            author = "Endherson",
-            title = "NO TITLE",
-            content = "NOTHING",
-            description = "NO ONE",
-            publishedAt = "NEVAH",
-            url = "WWW.SITE.COM",
-            urlToImage = "WWW.SITE.COM/IMAGE.JPG",
-            source = Source("","")
-        )
-        viewModel.saveArticle(article)
     }
 
     override fun onDestroyView() {
@@ -72,7 +60,7 @@ class HomeFragment : DaggerFragment() {
 
         articlesAdapter.setOnItemClickListener {
             val bundle = Bundle().apply {
-                putSerializable("article", it)
+                putSerializable(BUNDLE_ARTICLE, it)
             }
 
             findNavController().navigate(

@@ -44,5 +44,8 @@ class ArticleFragment : Fragment() {
         }
     }
 
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

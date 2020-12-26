@@ -19,6 +19,7 @@ constructor(private  val service: NewsService) : ViewModel()
     val breakingNews : LiveData<Resource<NewsResponse>>
         get() =_breakingNews
 
+
     val numberPage = 1
 
     init {
@@ -34,4 +35,7 @@ constructor(private  val service: NewsService) : ViewModel()
     fun saveArticle(article: Article) = viewModelScope.launch {
         service.savedArticle(article)
     }
+
+    fun getArticlesSaved() = service.getAllArticle()
+
 }
