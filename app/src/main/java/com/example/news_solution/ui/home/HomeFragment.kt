@@ -79,6 +79,7 @@ class HomeFragment : DaggerFragment() {
     }
 
     private fun settingObservers(){
+        viewModel.breakingNews.removeObservers(viewLifecycleOwner)
         viewModel.breakingNews.observe(viewLifecycleOwner, Observer { response ->
             when (response) {
 

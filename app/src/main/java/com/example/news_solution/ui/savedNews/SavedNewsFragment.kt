@@ -1,4 +1,4 @@
-package com.example.news_solution.ui.dashboard
+package com.example.news_solution.ui.savedNews
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,9 +14,8 @@ import com.example.news_solution.R
 import com.example.news_solution.adapters.ArticlesAdapter
 import com.example.news_solution.databinding.FragmentSavedNewsBinding
 import com.example.news_solution.utils.Constants.BUNDLE_ARTICLE
-import timber.log.Timber
 
-class DashboardFragment : Fragment() {
+class SavedNewsFragment : Fragment() {
 
     private var _binding : FragmentSavedNewsBinding? = null
     private val binding: FragmentSavedNewsBinding get() = _binding!!
@@ -57,13 +56,14 @@ class DashboardFragment : Fragment() {
                 putSerializable(BUNDLE_ARTICLE, article)
             }
             findNavController().navigate(
-                R.id.action_navigation_dashboard_to_articleFragment,
+                R.id.action_navigation_saved_news_to_articleFragment,
                 bundle
             )
         }
     }
 
     private fun settingObservers() {
+        viewModel.getArticlesSaved().removeObservers(viewLifecycleOwner)
         viewModel.getArticlesSaved().observe(viewLifecycleOwner, Observer {
         articles ->
             articlesAdapter.differ.submitList(articles)

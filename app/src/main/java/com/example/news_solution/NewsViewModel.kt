@@ -19,6 +19,10 @@ constructor(private  val service: NewsService) : ViewModel()
     val breakingNews : LiveData<Resource<NewsResponse>>
         get() =_breakingNews
 
+    private val _searchNews = MutableLiveData<Resource<NewsResponse>>()
+    val searchNews : LiveData<Resource<NewsResponse>>
+        get() =_searchNews
+
 
     val numberPage = 1
 
@@ -37,5 +41,13 @@ constructor(private  val service: NewsService) : ViewModel()
     }
 
     fun getArticlesSaved() = service.getAllArticle()
+
+    fun getSearchedNews (q : String) = viewModelScope.launch {
+        _searchNews.postValue(Resource.Loading())
+        val response = service.searchNews(q, numberPage)
+        _searchNews.postValue(response)
+    }
+
+
 
 }
