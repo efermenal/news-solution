@@ -48,6 +48,10 @@ constructor(private  val service: NewsService) : ViewModel()
         _searchNews.postValue(response)
     }
 
+    fun deleteNew(article: Article) = viewModelScope.launch {
+        service.deleteArticle(article)
+    }
+
 
 
 }
