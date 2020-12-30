@@ -5,4 +5,6 @@ object Constants {
     const val DATABASE_NAME = "news.db"
     const val BUNDLE_ARTICLE = "article"
     const val DELAY_BETWEEN_SEARCH = 500L
+    const val SIZE_PAGE = 20
+
 }
