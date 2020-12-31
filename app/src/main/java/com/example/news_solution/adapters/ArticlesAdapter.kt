@@ -43,7 +43,9 @@ class ArticlesAdapter: RecyclerView.Adapter<ArticlesAdapter.ArticleViewHolder>()
            with(differ.currentList[position]){
                 binding.tvDescription.text = description
                 binding.tvPublishedAt.text = publishedAt
-                binding.tvSource.text = source.name
+               if (source != null) {
+                   binding.tvSource.text = source?.name
+               }
                 binding.tvTitle.text = title
 
                Glide.with(holder.itemView).load(urlToImage).into(binding.ivArticleImage)

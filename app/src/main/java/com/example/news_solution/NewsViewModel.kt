@@ -19,8 +19,9 @@ class NewsViewModel
 constructor(private  val service: NewsService) : ViewModel()
 {
 
-    private  var numberPageBreakingNews = 1
+    var numberPageBreakingNews = 1
     var numberPageSearchNews = 1
+    private  var _breakingNewsResponse : NewsResponse? = null
     private val _breakingNews = MutableLiveData<Resource<NewsResponse>>()
     val breakingNews : LiveData<Resource<NewsResponse>>
         get() =_breakingNews
@@ -40,7 +41,22 @@ constructor(private  val service: NewsService) : ViewModel()
     fun getBreakingNews(code: String) = viewModelScope.launch {
         _breakingNews.postValue(Resource.Loading())
         val response = service.getBreakingNew(code, numberPageBreakingNews)
-        _breakingNews.postValue(response)
+        if (response is Resource.Success){
+            Timber.d("BREAKING WAS OK. NUMBER PAGE %s", numberPageSearchNews)
+            numberPageBreakingNews++
+            if (_breakingNewsResponse == null){
+                _breakingNewsResponse = response.data
+            }else{
+                val oldData = _breakingNewsResponse?.articles
+                val newData = response.data?.articles as List<Article>
+                Timber.d("Old data %s", oldData?.size)
+                Timber.d("New data %s", newData.size)
+                oldData?.addAll(newData)
+            }
+
+
+        }
+        _breakingNews.postValue(if (_breakingNewsResponse == null) response else Resource.Success(_breakingNewsResponse) as Resource<NewsResponse>?)
     }
 
     fun saveArticle(article: Article) = viewModelScope.launch {

@@ -4,22 +4,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AbsListView
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.news_solution.MainActivity
 import com.example.news_solution.NewsViewModel
 import com.example.news_solution.R
 import com.example.news_solution.adapters.ArticlesAdapter
 import com.example.news_solution.databinding.FragmentHomeBinding
-import com.example.news_solution.models.Article
-import com.example.news_solution.models.Source
+import com.example.news_solution.utils.Constants
 import com.example.news_solution.utils.Constants.BUNDLE_ARTICLE
 import com.example.news_solution.utils.Resource
 import dagger.android.support.DaggerFragment
 import timber.log.Timber
-import javax.inject.Inject
+
 
 class HomeFragment : DaggerFragment() {
 
@@ -34,6 +34,9 @@ class HomeFragment : DaggerFragment() {
         viewModel = (activity as MainActivity).viewModel
     }
 
+    private var isLoading = false
+    private var isScrolling = false
+    private var isLastPage = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -56,6 +59,7 @@ class HomeFragment : DaggerFragment() {
         binding.rvBreakingNews.apply {
             adapter = articlesAdapter
             layoutManager = LinearLayoutManager(activity)
+            addOnScrollListener(this@HomeFragment.scrolllistener)
         }
 
         articlesAdapter.setOnItemClickListener {
@@ -72,10 +76,12 @@ class HomeFragment : DaggerFragment() {
 
     private fun showProgressbar() {
         binding.paginationProgressBar.visibility = View.VISIBLE
+        isLoading = true
     }
 
     private fun hideProgressbar() {
         binding.paginationProgressBar.visibility = View.INVISIBLE
+        isLoading = false
     }
 
     private fun settingObservers(){
@@ -85,17 +91,22 @@ class HomeFragment : DaggerFragment() {
 
                 is Resource.Loading -> {
                     showProgressbar()
+                    Timber.d("Showing progressbar")
                 }
 
                 is Resource.Success -> {
                     hideProgressbar()
-                    response.data?.let { newsResponse ->
-                        articlesAdapter.differ.submitList(
-                                newsResponse.articles
-
-                        )
+                    response.data?.let { newsResponse->
+                        articlesAdapter.differ.submitList(newsResponse.articles.toList())
+                        Timber.d("List sent: %s",newsResponse.articles.size)
+                        val totalPages = newsResponse.totalResults / Constants.SIZE_PAGE + 2
+                        isLastPage = viewModel.numberPageBreakingNews == totalPages
+                        if (isLastPage){
+                            binding.rvBreakingNews.setPadding(0,0,0,0)
+                        }
                     }
                 }
+
                 is Resource.Error -> {
                     hideProgressbar()
                     response.message?.let { it -> Timber.d("An error occurred $it") }
@@ -104,4 +115,36 @@ class HomeFragment : DaggerFragment() {
             }
         })
     }
+
+    private val scrolllistener = object : RecyclerView.OnScrollListener() {
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            super.onScrollStateChanged(recyclerView, newState)
+            if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
+                isScrolling = true
+            }
+        }
+
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+
+            val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+            val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+            val visibleItemCount = layoutManager.childCount
+            val totalItemCount = layoutManager.itemCount
+
+            val isNotLoadingAndNotLastPage = !isLoading && !isLastPage
+            val isAtLastItem = firstVisibleItemPosition + visibleItemCount >= totalItemCount
+            val isNotAtBeginning = firstVisibleItemPosition >= 0
+            val isTotalMoreThanVisible = totalItemCount >= Constants.SIZE_PAGE
+            val shouldPaginate = isNotLoadingAndNotLastPage && isAtLastItem
+                    && isNotAtBeginning && isTotalMoreThanVisible && isScrolling
+
+            if (shouldPaginate){
+                viewModel.getBreakingNews("us")
+                isScrolling = false
+            }
+
+        }
+    }
+
 }

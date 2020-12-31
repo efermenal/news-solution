@@ -32,9 +32,9 @@ class SearchNewsFragment : Fragment() {
     private val binding: FragmentSearchNewsBinding
         get() = _binding!!
 
-    var isLoading = false
-    var isScrolling = false
-    var isLastPage = false
+    private var isLoading = false
+    private var isScrolling = false
+    private var isLastPage = false
 
     private lateinit var articlesAdapter: ArticlesAdapter
     private lateinit var viewModel: NewsViewModel
@@ -81,7 +81,6 @@ class SearchNewsFragment : Fragment() {
                 }
                 is Resource.Success -> {
                     hideProgressbar()
-
                     response.data?.let { newsResponse->
                         articlesAdapter.differ.submitList(newsResponse.articles.toList())
                         Timber.d("List sent: %s",newsResponse.articles.size)
@@ -91,8 +90,6 @@ class SearchNewsFragment : Fragment() {
                             binding.rvSearchNews.setPadding(0,0,0,0)
                         }
                     }
-
-
                 }
                 is Resource.Error -> {
                     hideProgressbar()
