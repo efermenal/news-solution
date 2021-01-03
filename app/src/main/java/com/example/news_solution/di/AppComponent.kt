@@ -14,7 +14,8 @@ import dagger.android.support.AndroidSupportInjectionModule
         AndroidSupportInjectionModule::class,
         ActivityBuilderModule::class,
         ViewModelModule::class,
-        AppModule::class
+        AppModule::class,
+        DispatcherModule::class
     ]
 )
 @AppScope

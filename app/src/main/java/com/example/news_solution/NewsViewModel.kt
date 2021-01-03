@@ -20,18 +20,16 @@ constructor(private  val service: NewsService) : ViewModel()
 {
 
     var numberPageBreakingNews = 1
-    var numberPageSearchNews = 1
     private  var _breakingNewsResponse : NewsResponse? = null
     private val _breakingNews = MutableLiveData<Resource<NewsResponse>>()
     val breakingNews : LiveData<Resource<NewsResponse>>
         get() =_breakingNews
 
+    var numberPageSearchNews = 1
     private  var _searchNewsResponse : NewsResponse? = null
     private val _searchNews = MutableLiveData<Resource<NewsResponse>>()
     val searchNews : LiveData<Resource<NewsResponse>>
         get() =_searchNews
-
-
 
 
     init {
@@ -89,7 +87,6 @@ constructor(private  val service: NewsService) : ViewModel()
     fun deleteNew(article: Article) = viewModelScope.launch {
         service.deleteArticle(article)
     }
-
 
 
 }
