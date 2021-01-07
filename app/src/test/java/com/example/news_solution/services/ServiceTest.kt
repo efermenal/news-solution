@@ -8,11 +8,14 @@ import com.example.news_solution.interfaces.RemoteRepository
 import com.example.news_solution.models.Article
 import com.example.news_solution.models.NewsResponse
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Test
 
+@ExperimentalCoroutinesApi
 class ServiceTest{
 
     private lateinit var fakeRemoteDataSource: RemoteRepository
@@ -43,7 +46,7 @@ class ServiceTest{
     }
 
     @Test
-    fun addArticle_LocalDataSource() = runBlocking {
+    fun savedArticle_addArticleLocalDataSource_expectedBehavior() = runBlockingTest {
         // Arrange phase is empty: initializing in createRepository
         // Act
         repository.savedArticle(article)
@@ -52,7 +55,7 @@ class ServiceTest{
     }
 
     @Test
-    fun removeArticle_LocalDataSource() = runBlocking {
+    fun deleteArticle_removeArticleLocalDataSource_expectedBehavior() = runBlockingTest {
         repository.savedArticle(article)
         repository.deleteArticle(article)
         assertThat("Not empty", !(fakeLocalDataSource as FakeLocalDataSource).db.contains(article))
