@@ -1,8 +1,10 @@
 package com.example.news_solution.services
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.example.news_solution.FakeLocalDataSource
 import com.example.news_solution.FakeRemoteDataSource
 import com.example.news_solution.db.ArticleDao
+import com.example.news_solution.getOrAwaitValue
 import com.example.news_solution.interfaces.NewsService
 import com.example.news_solution.interfaces.RemoteRepository
 import com.example.news_solution.models.Article
@@ -10,13 +12,25 @@ import com.example.news_solution.models.NewsResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.setMain
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.core.IsEqual.equalTo
+import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TestRule
 
 @ExperimentalCoroutinesApi
 class ServiceTest{
+
+    @get:Rule
+    var instantExecutorRule = InstantTaskExecutorRule()
+
+    private val dispatcher = TestCoroutineDispatcher()
 
     private lateinit var fakeRemoteDataSource: RemoteRepository
     private lateinit var fakeLocalDataSource: ArticleDao
@@ -43,10 +57,24 @@ class ServiceTest{
         fakeRemoteDataSource = FakeRemoteDataSource(newsResponse)
         fakeLocalDataSource = FakeLocalDataSource()
         repository = Service(fakeRemoteDataSource, fakeLocalDataSource, Dispatchers.Unconfined)
+        Dispatchers.setMain(dispatcher)
+    }
+
+    @After
+    fun tearDown(){
+        Dispatchers.resetMain()
     }
 
     @Test
-    fun savedArticle_addArticleLocalDataSource_expectedBehavior() = runBlockingTest {
+    fun getAllArticle_addAndGetArticleLocalDataSource_articleRetrieved() = runBlockingTest {
+        repository.savedArticle(article)
+        val articleInserted = repository.getAllArticle().getOrAwaitValue()
+
+        assertThat(articleInserted[0], equalTo(article))
+    }
+
+    @Test
+    fun savedArticle_addArticleLocalDataSource_articleSaved() = runBlockingTest {
         // Arrange phase is empty: initializing in createRepository
         // Act
         repository.savedArticle(article)
@@ -55,7 +83,7 @@ class ServiceTest{
     }
 
     @Test
-    fun deleteArticle_removeArticleLocalDataSource_expectedBehavior() = runBlockingTest {
+    fun deleteArticle_removeArticleLocalDataSource_articleRemoved() = runBlockingTest {
         repository.savedArticle(article)
         repository.deleteArticle(article)
         assertThat("Not empty", !(fakeLocalDataSource as FakeLocalDataSource).db.contains(article))

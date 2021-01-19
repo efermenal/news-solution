@@ -1,6 +1,7 @@
 package com.example.news_solution.services
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import com.example.news_solution.db.ArticleDao
 import com.example.news_solution.di.ActivityScope
 import com.example.news_solution.di.AppScope
@@ -11,6 +12,8 @@ import com.example.news_solution.models.Article
 import com.example.news_solution.models.NewsResponse
 import com.example.news_solution.utils.Resource
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -34,6 +37,9 @@ constructor(
 
 
     override fun getAllArticle(): LiveData<List<Article>> = localData.getAllArticle()
+                .flowOn(ioDispatcher)
+                .conflate()
+                .asLiveData()
 
     override suspend fun savedArticle(article: Article): Long = withContext(ioDispatcher){ localData.upsert(article)}
 

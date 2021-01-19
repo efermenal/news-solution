@@ -1,9 +1,11 @@
 package com.example.news_solution
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+
 import com.example.news_solution.db.ArticleDao
 import com.example.news_solution.models.Article
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+
 
 class FakeLocalDataSource (var db : MutableList<Article>  = mutableListOf()): ArticleDao {
     override suspend fun upsert(article: Article): Long {
@@ -11,10 +13,9 @@ class FakeLocalDataSource (var db : MutableList<Article>  = mutableListOf()): Ar
         return db.indexOf(article).toLong()
     }
 
-    override fun getAllArticle(): LiveData<List<Article>> {
-        val list = MutableLiveData<List<Article>>()
-        list.value = db.toList()
-        return list
+    override fun getAllArticle(): Flow<List<Article>> {
+       val list : List<MutableList<Article>> = listOf(db)
+        return  list.asFlow()
     }
 
     override suspend fun deleteArticle(article: Article) {

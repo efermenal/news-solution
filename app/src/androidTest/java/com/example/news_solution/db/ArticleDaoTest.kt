@@ -9,6 +9,8 @@ import com.example.news_solution.getOrAwaitValue
 import com.example.news_solution.models.Article
 import com.example.news_solution.models.Source
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.IsEqual.equalTo
@@ -63,7 +65,7 @@ class ArticleDaoTest {
         )
         articleDao.upsert(article)
 
-        val articles = articleDao.getAllArticle().getOrAwaitValue()
+        val articles = articleDao.getAllArticle().first()
 
         assertThat(articles[0], equalTo(article));
     }
@@ -88,7 +90,7 @@ class ArticleDaoTest {
         val newArticle = article.copy(author = "newAuthor", content = "newContent", title = "newTitle")
         articleDao.upsert(newArticle)
 
-        val articles = articleDao.getAllArticle().getOrAwaitValue()
+        val articles = articleDao.getAllArticle().first()
 
         assertThat(articles[0], equalTo(newArticle));
     }
@@ -111,7 +113,7 @@ class ArticleDaoTest {
         articleDao.upsert(article)
         articleDao.deleteArticle(article)
 
-        val articles = articleDao.getAllArticle().getOrAwaitValue()
+        val articles = articleDao.getAllArticle().first()
 
         assertThat("article was not deleted", articles.isEmpty());
 
