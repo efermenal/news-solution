@@ -5,6 +5,7 @@ plugins {
     id 'androidx.navigation.safeargs.kotlin'
 }
 
+apply from: "$project.rootDir/jacoco-noflavor-module.gradle"
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -24,6 +25,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        debug {
+            applicationIdSuffix ".debug"
+            minifyEnabled false
+            testCoverageEnabled true
+        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -35,8 +41,6 @@ android {
     buildFeatures {
         viewBinding true
     }
-
-
 }
 
 dependencies {
